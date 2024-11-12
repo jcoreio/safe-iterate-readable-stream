@@ -8,6 +8,9 @@ dependencies:
   '@babel/runtime':
     specifier: ^7.18.6
     version: 7.26.0
+  '@jcoreio/abortable':
+    specifier: ^1.0.0
+    version: 1.0.0
 
 devDependencies:
   '@jcoreio/eslint-plugin-implicit-dependencies':
@@ -1483,6 +1486,11 @@ packages:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
     dev: true
+
+  /@jcoreio/abortable@1.0.0:
+    resolution: {integrity: sha512-gSUdfOARC4qBHCc8fAGlgWlo7+DFKW8NXaTC+a/4Bw6evOy5edioBSgX4qB2TLUoL7bEqhSVw92dImw0SxYVKA==}
+    engines: {node: '>=16'}
+    dev: false
 
   /@jcoreio/eslint-plugin-implicit-dependencies@1.1.1:
     resolution: {integrity: sha512-Kg+erBdnA1sczSNNGEGIA9k7hwfnN1NrKEnACfJwbGoR6T5E/yhBbpyF5q5dEIvxHTUJ4wL5azEd3m68qq8F+Q==}
