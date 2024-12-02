@@ -2,6 +2,7 @@ import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import { safeIterateReadableStream } from '../src/index'
 import { withResolvers } from './withResolvers'
+import { abortable } from '@jcoreio/abortable'
 
 function isAbortError(error: any) {
   return error?.name === 'AbortError'
@@ -49,6 +50,7 @@ describe(`safeIterateReadableStream`, function () {
       async pull(controller) {
         controller.enqueue('test1')
         controller.enqueue('test2')
+        controller.enqueue('test3')
       },
     })
     const ac = new AbortController()
@@ -60,6 +62,34 @@ describe(`safeIterateReadableStream`, function () {
       }
     } catch (error) {
       expect(error).to.have.property('code').that.equals('ERR_INVALID_STATE')
+    }
+    expect(stream.locked).to.be.false
+    expect(elems).to.deep.equal(['test1', 'test2'])
+  })
+  it(`works when signal is aborted while reading`, async function () {
+    let called = false
+    const stream = new ReadableStream({
+      async pull(controller) {
+        if (called) {
+          await abortable(new Promise(() => {}), ac.signal).catch(() => {})
+          return
+        }
+        called = true
+        controller.enqueue('test1')
+        controller.enqueue('test2')
+      },
+    })
+    const ac = new AbortController()
+    const elems = []
+    try {
+      for await (const elem of safeIterateReadableStream(stream, ac.signal)) {
+        elems.push(elem)
+        if (elems.length === 2) {
+          setTimeout(() => ac.abort(), 50)
+        }
+      }
+    } catch (error) {
+      expect(isAbortError(error)).to.be.true
     }
     expect(stream.locked).to.be.false
     expect(elems).to.deep.equal(['test1', 'test2'])
