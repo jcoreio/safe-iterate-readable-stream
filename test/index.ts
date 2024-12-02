@@ -44,6 +44,47 @@ describe(`safeIterateReadableStream`, function () {
     }
     expect(stream.locked).to.be.false
   })
+  it(`works when something else cancels the stream`, async function () {
+    const stream = new ReadableStream({
+      async pull(controller) {
+        controller.enqueue('test1')
+        controller.enqueue('test2')
+      },
+    })
+    const ac = new AbortController()
+    const elems = []
+    try {
+      for await (const elem of safeIterateReadableStream(stream, ac.signal)) {
+        elems.push(elem)
+        if (elems.length === 2) await stream.cancel()
+      }
+    } catch (error) {
+      expect(error).to.have.property('code').that.equals('ERR_INVALID_STATE')
+    }
+    expect(stream.locked).to.be.false
+    expect(elems).to.deep.equal(['test1', 'test2'])
+  })
+
+  it(`works when stream closes normally`, async function () {
+    const stream = new ReadableStream({
+      async pull(controller) {
+        controller.enqueue('test1')
+        controller.enqueue('test2')
+        controller.close()
+      },
+    })
+    const ac = new AbortController()
+    const elems = []
+    try {
+      for await (const elem of safeIterateReadableStream(stream, ac.signal)) {
+        elems.push(elem)
+      }
+    } catch (error) {
+      expect(error).to.deep.equal(new Error('test'))
+    }
+    expect(stream.locked).to.be.false
+    expect(elems).to.deep.equal(['test1', 'test2'])
+  })
 
   it(`breaks when signal is aborted`, async function () {
     const aborted = withResolvers<void>()

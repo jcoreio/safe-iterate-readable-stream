@@ -16,6 +16,8 @@ export function safeIterateReadableStream<T>(
         try {
           signal.removeEventListener('abort', onAbort)
           await reader.cancel()
+        } catch {
+          // ignore
         } finally {
           reader.releaseLock()
         }
