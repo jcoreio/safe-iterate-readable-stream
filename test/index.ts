@@ -27,7 +27,7 @@ describe(`safeIterateReadableStream`, function () {
     } catch (error) {
       if (!isAbortError(error)) throw error
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
   })
   it(`cleans up after error reading stream`, async function () {
     const stream = new ReadableStream({
@@ -38,12 +38,13 @@ describe(`safeIterateReadableStream`, function () {
     const ac = new AbortController()
     try {
       for await (const elem of safeIterateReadableStream(stream, ac.signal)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         elem
       }
     } catch (error) {
       expect(error).to.deep.equal(new Error('test'))
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
   })
   it(`works when something else cancels the stream`, async function () {
     const stream = new ReadableStream({
@@ -63,7 +64,7 @@ describe(`safeIterateReadableStream`, function () {
     } catch (error) {
       expect(error).to.have.property('code').that.equals('ERR_INVALID_STATE')
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
     expect(elems).to.deep.equal(['test1', 'test2'])
   })
   it(`works when signal is aborted while reading`, async function () {
@@ -89,9 +90,9 @@ describe(`safeIterateReadableStream`, function () {
         }
       }
     } catch (error) {
-      expect(isAbortError(error)).to.be.true
+      expect(isAbortError(error)).to.equal(true)
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
     expect(elems).to.deep.equal(['test1', 'test2'])
   })
 
@@ -112,7 +113,7 @@ describe(`safeIterateReadableStream`, function () {
     } catch (error) {
       expect(error).to.deep.equal(new Error('test'))
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
     expect(elems).to.deep.equal(['test1', 'test2'])
   })
 
@@ -139,7 +140,7 @@ describe(`safeIterateReadableStream`, function () {
     } catch (error) {
       if (!isAbortError(error)) throw error
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
   })
   it(`cancels reader when iteratee returns`, async function () {
     let i = 0
@@ -154,7 +155,7 @@ describe(`safeIterateReadableStream`, function () {
       expect(elem).to.equal(++j)
       if (elem > 2) break
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
   })
   it(`cancels reader when iteratee throws`, async function () {
     let i = 0
@@ -173,6 +174,6 @@ describe(`safeIterateReadableStream`, function () {
     } catch (error) {
       expect(error).to.deep.equal(new Error('test'))
     }
-    expect(stream.locked).to.be.false
+    expect(stream.locked).to.equal(false)
   })
 })

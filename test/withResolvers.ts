@@ -21,5 +21,6 @@ export function withResolvers<T>(
     resolve = res
     reject = rej
   })
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return { promise, resolve: resolve!, reject: reject! }
 }
