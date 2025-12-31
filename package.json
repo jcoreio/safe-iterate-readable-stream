@@ -62,7 +62,7 @@
   "packageManager": "pnpm@10.6.5",
   "dependencies": {
     "@babel/runtime": "^7.26.0",
-    "@jcoreio/abortable": "^1.0.0"
+    "@jcoreio/abortable": "^1.0.3"
   },
   "@jcoreio/toolchain": {
     "migratedVersion": "5.8.8"

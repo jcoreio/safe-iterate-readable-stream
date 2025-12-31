@@ -12,8 +12,8 @@ importers:
         specifier: ^7.26.0
         version: 7.28.4
       '@jcoreio/abortable':
-        specifier: ^1.0.0
-        version: 1.0.2
+        specifier: ^1.0.3
+        version: 1.0.3
     devDependencies:
       '@jcoreio/toolchain':
         specifier: 5.8.8
@@ -694,8 +694,8 @@ packages:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
 
-  '@jcoreio/abortable@1.0.2':
-    resolution: {integrity: sha512-ShqoSP27eGRQv9MOZ+lken/Szin/nC2/PwvJwFQWdWFOWpeCOZt9lnTONm+6d9zjacdIO+kbqRLt/FpjtXx7Hw==}
+  '@jcoreio/abortable@1.0.3':
+    resolution: {integrity: sha512-wodV5LCjSaEeGPJVZj+uMaqY4yD0YHX/+SKWZVkVm0i3ZwIFgAEUMSnGG+Ky4LOlsmvfCKpaqm50yxZRiUonUg==}
     engines: {node: '>=16'}
 
   '@jcoreio/eslint-plugin-implicit-dependencies@1.2.0':
@@ -3073,7 +3073,7 @@ snapshots:
 
   '@istanbuljs/schema@0.1.3': {}
 
-  '@jcoreio/abortable@1.0.2': {}
+  '@jcoreio/abortable@1.0.3': {}
 
   '@jcoreio/eslint-plugin-implicit-dependencies@1.2.0':
     dependencies:

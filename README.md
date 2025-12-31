@@ -23,8 +23,8 @@ use use carefully-written logic like `@jcoreio/safe-iterate-readable-stream` pro
 
 ## `safeIterateReadableStream(stream, signal)`
 
-Returns an `AsyncIterable` that iterates over the given stream. If the iterator is `return()`ed, `throw()`n, or `signal` is aborted, it will close and reject
-any outstanding `next()` promises immediately.
+Returns an `AsyncIterable` that iterates over the given stream. If the iterator is `return()`ed, `throw()`n, or `signal` is aborted, it will cancel the stream
+and reject any outstanding `next()` promises immediately.
 
 ```ts
 import { safeIterateReadableStream } from '@jcoreio/safe-iterate-readable-stream'

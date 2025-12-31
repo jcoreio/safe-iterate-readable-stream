@@ -2,20 +2,28 @@ import { abortable } from '@jcoreio/abortable'
 
 export function safeIterateReadableStream<T>(
   stream: ReadableStream<T>,
-  signal: AbortSignal
+  signal?: AbortSignal
 ) {
+  const abortController = new AbortController()
+  if (signal?.aborted) abortController.abort(signal.reason)
+  function onAbort() {
+    abortController.abort(signal?.reason)
+    signal?.removeEventListener('abort', onAbort)
+  }
+  signal?.addEventListener('abort', onAbort)
+  const innerSignal = abortController.signal
   return {
     [Symbol.asyncIterator](): AsyncIterator<T, void> {
       let reader: ReadableStreamDefaultReader<T> | undefined
 
-      function onAbort() {
+      function onInnerAbort() {
         cleanup().catch(() => {})
       }
       async function doCleanup() {
         if (!reader) return
         try {
-          signal.removeEventListener('abort', onAbort)
-          await reader.cancel()
+          innerSignal.removeEventListener('abort', onInnerAbort)
+          await reader.cancel(innerSignal.reason)
         } catch {
           // ignore
         } finally {
@@ -30,8 +38,9 @@ export function safeIterateReadableStream<T>(
       return {
         async next() {
           if (!reader) {
-            signal.addEventListener('abort', onAbort)
+            innerSignal.addEventListener('abort', onInnerAbort)
             reader = stream.getReader()
+            if (innerSignal.aborted) await reader.cancel(innerSignal.reason)
           }
           const result = await abortable(
             reader.read().then(
@@ -44,7 +53,7 @@ export function safeIterateReadableStream<T>(
                 throw error
               }
             ),
-            signal
+            innerSignal
           )
           return result.done ? { done: true, value: undefined } : result
         },

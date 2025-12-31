@@ -9,7 +9,7 @@ function isAbortError(error: any) {
 }
 
 describe(`safeIterateReadableStream`, function () {
-  it(`breaks when signal is aborted`, async function () {
+  it(`cancels stream when signal is aborted`, async function () {
     const stream = new ReadableStream({
       async start(controller) {
         controller.enqueue(1)
@@ -96,6 +96,36 @@ describe(`safeIterateReadableStream`, function () {
     expect(elems).to.deep.equal(['test1', 'test2'])
   })
 
+  it(`works when signal is aborted before iteration`, async function () {
+    let called = false
+    const stream = new ReadableStream({
+      async pull(controller) {
+        if (called) {
+          await abortable(new Promise(() => {}), ac.signal).catch(() => {})
+          return
+        }
+        called = true
+        controller.enqueue('test1')
+        controller.enqueue('test2')
+      },
+    })
+    const ac = new AbortController()
+    ac.abort()
+    const elems = []
+    try {
+      for await (const elem of safeIterateReadableStream(stream, ac.signal)) {
+        elems.push(elem)
+        if (elems.length === 2) {
+          setTimeout(() => ac.abort(), 50)
+        }
+      }
+    } catch (error) {
+      expect(isAbortError(error)).to.equal(true)
+    }
+    expect(stream.locked).to.equal(false)
+    expect(elems).to.deep.equal([])
+  })
+
   it(`works when stream closes normally`, async function () {
     const stream = new ReadableStream({
       async pull(controller) {
@@ -117,7 +147,7 @@ describe(`safeIterateReadableStream`, function () {
     expect(elems).to.deep.equal(['test1', 'test2'])
   })
 
-  it(`breaks when signal is aborted`, async function () {
+  it(`cancels stream when signal is aborted`, async function () {
     const aborted = withResolvers<void>()
     const stream = new ReadableStream({
       async start(controller) {
@@ -142,6 +172,33 @@ describe(`safeIterateReadableStream`, function () {
     }
     expect(stream.locked).to.equal(false)
   })
+  it(`cancels reader with signal.reason`, async function () {
+    const aborted = withResolvers<void>()
+    const stream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(1)
+        controller.enqueue(2)
+        await aborted.promise
+        controller.enqueue(3)
+      },
+    })
+    const reason = new Error('test!')
+    const ac = new AbortController()
+    let i = 0
+    try {
+      for await (const elem of safeIterateReadableStream(stream, ac.signal)) {
+        expect(elem).to.equal(++i)
+        if (elem >= 2) {
+          ac.abort(reason)
+          aborted.resolve()
+        }
+      }
+    } catch (error) {
+      if (error !== reason) throw error
+    }
+    expect(stream.locked).to.equal(false)
+  })
+
   it(`cancels reader when iteratee returns`, async function () {
     let i = 0
     const stream = new ReadableStream({
