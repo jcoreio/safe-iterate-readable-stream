@@ -1,5 +1,3 @@
-import { abortable } from '@jcoreio/abortable'
-
 export function safeIterateReadableStream<T>(
   stream: ReadableStream<T>,
   signal?: AbortSignal
@@ -42,19 +40,11 @@ export function safeIterateReadableStream<T>(
             reader = stream.getReader()
             if (innerSignal.aborted) await reader.cancel(innerSignal.reason)
           }
-          const result = await abortable(
-            reader.read().then(
-              async (result) => {
-                if (result.done) await cleanup()
-                return result
-              },
-              async (error: unknown) => {
-                await cleanup()
-                throw error
-              }
-            ),
-            innerSignal
-          )
+          const result = await reader.read().catch(async (error: unknown) => {
+            await cleanup()
+            throw error
+          })
+          if (result.done) await cleanup()
           return result.done ? { done: true, value: undefined } : result
         },
         async return() {

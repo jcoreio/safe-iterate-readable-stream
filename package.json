@@ -17,6 +17,7 @@
     "asynciterable"
   ],
   "devDependencies": {
+    "@jcoreio/abortable": "^1.0.4",
     "@jcoreio/toolchain": "5.8.8",
     "@jcoreio/toolchain-circle": "^5.8.8",
     "@jcoreio/toolchain-esnext": "^5.8.8",
@@ -61,8 +62,7 @@
   },
   "packageManager": "pnpm@10.6.5",
   "dependencies": {
-    "@babel/runtime": "^7.26.0",
-    "@jcoreio/abortable": "^1.0.3"
+    "@babel/runtime": "^7.26.0"
   },
   "@jcoreio/toolchain": {
     "migratedVersion": "5.8.8"
