@@ -18,12 +18,12 @@
   ],
   "devDependencies": {
     "@jcoreio/abortable": "^1.0.4",
-    "@jcoreio/toolchain": "5.8.8",
-    "@jcoreio/toolchain-circle": "^5.8.8",
-    "@jcoreio/toolchain-esnext": "^5.8.8",
-    "@jcoreio/toolchain-mocha": "^5.8.8",
-    "@jcoreio/toolchain-semantic-release": "^5.8.8",
-    "@jcoreio/toolchain-typescript": "^5.8.8",
+    "@jcoreio/toolchain": "5.10.8",
+    "@jcoreio/toolchain-circle": "^5.10.8",
+    "@jcoreio/toolchain-esnext": "^5.10.8",
+    "@jcoreio/toolchain-mocha": "^5.10.8",
+    "@jcoreio/toolchain-semantic-release": "^5.10.8",
+    "@jcoreio/toolchain-typescript": "^5.10.8",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",
@@ -65,6 +65,6 @@
     "@babel/runtime": "^7.26.0"
   },
   "@jcoreio/toolchain": {
-    "migratedVersion": "5.8.8"
+    "migratedVersion": "5.10.8"
   }
 }
